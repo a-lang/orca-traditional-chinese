@@ -6,14 +6,17 @@ Traditional Chinese (zh-TW) language pack for [Orca](https://github.com/stablyai
 
 Full coverage of Orca's translatable UI catalog:
 
-- **12,529 / 12,531** translatable strings translated (99.98%)
+- **13,581 / 13,581** translatable strings translated (100%)
 - Settings, sidebars, editor, terminal, GitHub/GitLab/Linear/Jira integrations,
   onboarding, mobile companion app, dashboard, system tray, and application menu
 - Human-reviewed Taiwan Traditional Chinese — not a mechanical conversion of
   the Simplified Chinese catalog
-- 2 remaining keys are inline CSS animation styles, not translatable prose
-  (see [Known limitations](#known-limitations)); they fall back to English
-  automatically with no user-facing impact
+- Resynced against `stablyai/orca` `main` (`f737f34`, 2026-09-02): 1,082 keys
+  added for UI that landed since the last sync, and 30 keys dropped for UI that
+  upstream removed
+- 2 further keys are inline CSS animation styles, not translatable prose
+  (see [Known limitations](#known-limitations)); they are excluded and fall back
+  to English automatically with no user-facing impact
 
 ## Installation
 
@@ -36,9 +39,11 @@ The English source (`en.json` from `stablyai/orca`,
 UI namespace, and translated with an LLM-assisted, multi-pass process:
 
 1. Flatten the English catalog into `path -> string` pairs, excluding keys
-   under the plugin-protected namespace (`auto.components.settings.plugin*`,
-   enforced by Orca's own plugin artifact parser) — 180 protected keys stay
-   in English by design.
+   under the plugin-protected namespace (`auto.components.settings.plugin*` —
+   matched case-insensitively, so `PluginConsentDialog.*` and friends are
+   covered too, minus the exact paths exempted in
+   `plugin-translatable-chrome.ts`) — 180 protected keys stay in English by
+   design.
 2. Translate in batches grouped by component/namespace, with a shared
    zh-TW glossary (儲存庫 / 終端 / 外掛程式 / 預設 / 設定 …), placeholders
    preserved verbatim, and brand names / code literals kept untranslated
@@ -75,8 +80,14 @@ side alone — flagging them here for visibility:
   prose; they are excluded from the pack and fall back to English.
 - The language selector shows **zh-TW — a-lang.traditional-chinese** because
   upstream renders plugin packs as `{locale} — {pluginKey}`; a native display
-  name (e.g. 中文（繁體）) is tracked upstream in
-  [#13140](https://github.com/stablyai/orca/issues/13140).
+  name (e.g. 中文（繁體）) is requested upstream in
+  [#13031](https://github.com/stablyai/orca/issues/13031), with an open pull
+  request in [#13140](https://github.com/stablyai/orca/pull/13140).
+
+  **Do not add `displayName` to `orca-plugin.json` until that PR ships.**
+  `pluginLanguagePackContributionSchema` is currently `.strict()`, so an
+  unrecognised key fails manifest validation for the whole plugin — the pack
+  would stop loading entirely rather than degrade to the old picker label.
 
 ## Contributing
 
